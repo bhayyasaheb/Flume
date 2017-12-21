@@ -1,0 +1,93 @@
+put mytwitter.conf file in /usr/local/flume/conf 
+
+#command to run the agent
+flume-ng agent --conf $FLUME_CONF_DIR --conf-file $FLUME_CONF_DIR/mytwitter.conf --name TwitterAgent
+
+Download FlumeData.1513879015212 file from /user/flume/tweets 
+
+Place FlumeData.1513879015212 in /home/hduser path 
+
+
+Avro Scema of FlumeData.1513879015212
+-------------------------------------
+
+{"type":"record",
+"name":"Doc",
+"doc":"adoc",
+"fields":
+[
+{"name":"id","type":"string"},
+{"name":"user_friends_count","type":["int","null"]},
+{"name":"user_location","type":["string","null"]},
+{"name":"user_description","type":["string","null"]},
+{"name":"user_statuses_count","type":["int","null"]},
+{"name":"user_followers_count","type":["int","null"]},
+{"name":"user_name","type":["string","null"]},
+{"name":"user_screen_name","type":["string","null"]},
+{"name":"created_at","type":["string","null"]},
+{"name":"text","type":["string","null"]},
+{"name":"retweet_count","type":["long","null"]},
+{"name":"retweeted","type":["boolean","null"]},
+{"name":"in_reply_to_user_id","type":["long","null"]},
+{"name":"source","type":["string","null"]},
+{"name":"in_reply_to_status_id","type":["long","null"]},
+{"name":"media_url_https","type":["string","null"]},
+{"name":"expanded_url","type":["string","null"]}
+]
+}	
+
+put avro schema of FlumeData.1513879015212 file like above shown in /home/hduser
+
+In Hive Terminal:-
+-----------------
+
+create database flume;
+
+use flume;
+
+Loading Avro type-data (flume) in Hive table:-
+---------------------------------------------
+CREATE TABLE tweets
+  ROW FORMAT SERDE
+     'org.apache.hadoop.hive.serde2.avro.AvroSerDe'
+  STORED AS INPUTFORMAT
+     'org.apache.hadoop.hive.ql.io.avro.AvroContainerInputFormat'
+  OUTPUTFORMAT
+     'org.apache.hadoop.hive.ql.io.avro.AvroContainerOutputFormat'
+  TBLPROPERTIES ('avro.schema.url'='file:/home/hduser/mytwitter.avsc') ;
+
+
+Load data in the table:-
+-----------------------
+LOAD DATA Local INPATH '/home/hduser/FlumeData.1513879015212' OVERWRITE INTO TABLE tweets;
+
+select * from tweets limit 1;
+
+
+CREATE TABLE tweets2 (
+id string, 
+user_friends_count int, 
+user_location string,
+user_description string,
+user_statuses_count int,
+user_followers_count int,
+user_name string,
+user_screen_name string,
+created_at string,
+text string,
+retweet_count bigint,
+retweeted boolean,
+in_reply_to_user_id bigint,
+source string,
+in_reply_to_status_id bigint,
+media_url_https string,
+expanded_url string)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '/t' 
+STORED AS TEXTFILE;
+
+INSERT OVERWRITE TABLE tweets2 SELECT * FROM tweets;
+
+
+
+
+

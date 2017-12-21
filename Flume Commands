@@ -1,0 +1,20 @@
+
+1. copy the niit1.conf and niit2.conf in /usr/local/flume/conf
+2. put custs1 in /home/hduser
+3. use following command then data from custs1 is stored in hdfs in /flume/17-12-22/FlumeData.1513884116277 file using flume:-
+	flume-ng agent --conf $FLUME_CONF_DIR --conf-file $FLUME_CONF_DIR/niit1.conf --name myagent -Dflume.root.logger=INFO,console
+
+4. use following command in terminal:-
+	flume-ng agent --conf $FLUME_CONF_DIR --conf-file $FLUME_CONF_DIR/niit2.conf --name myagent -Dflume.root.logger=INFO,console
+
+5. open new terminal:- give folowing command type:- the port number should be same as given in niit2.conf file
+	curl telnet://localhost:41414
+
+6. then type words then automatically the word is stored in hdfs in /flume/17-12-22/FlumeData.1513883873643 file using flume 
+
+
+
+
+below command give port number in linux
+netstat -tulpn
+ 
